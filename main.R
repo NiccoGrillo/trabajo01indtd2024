@@ -16,7 +16,7 @@ resultado_wald = criterio.Wald(X, favorable = TRUE)
 # Este criterio selecciona la alternativa con el mejor resultado posible
 resultado_optimista = criterio.Optimista(X, favorable = TRUE)
 
-# Aplicamos el criterio de Hurwicz (mezcla de optimismo y pesimismo)
+# Aplicamos el criterio de Hurwicz
 # alfa es el parámetro de optimismo (0.3 en este caso)
 resultado_hurwicz = criterio.Hurwicz(X, alfa = 0.3, favorable = TRUE)
 
