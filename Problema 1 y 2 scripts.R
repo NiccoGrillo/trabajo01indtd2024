@@ -1,4 +1,4 @@
-# Cargamos las funciones necesarias
+# Problema 1 --------------------
 source("teoriadecision_funciones_incertidumbre.R")
 
 # Creamos la matriz de decisión
@@ -95,3 +95,24 @@ for (i in seq_along(valores_alfa)) {
 
 
 
+
+
+# Problema 2 ----------------------------
+# Definir la tabla de decisión con los valores del caso real
+X <- matrix(c(250, 200, 100, 10, 400, 300, 150, -20, 500, 350, 200, -50, 600, 400, 250, -100),
+            nrow = 4, ncol = 4, byrow = TRUE)
+colnames(X) <- c('e1', 'e2', 'e3', 'e4')
+rownames(X) <- c('d1', 'd2', 'd3', 'd4')
+
+# Cargar las funciones del archivo proporcionado (teoriadecision_funciones_incertidumbre_nuevo.R)
+# source('teoriadecision_funciones_incertidumbre_nuevo.R')
+
+# Aplicar todos los criterios de decisión bajo incertidumbre utilizando la función 'criterio.Todos'
+resultado_todos <- criterio.Todos(X, alfa = 0.3, favorable = TRUE)
+
+# Imprimir la tabla con los resultados de todos los criterios
+print(resultado_todos)
+
+# Conclusión basada en los resultados
+cat("Conclusión del problema 2:\n")
+cat("Basado en los resultados obtenidos, la alternativa d4 parece ser la mejor opción en la mayoría de los métodos evaluados. En el criterio de Wald (Pesimista), Optimista, y Punto Ideal, d4 es la alternativa óptima. Aunque en el criterio de Hurwicz y Laplace se destacan otras alternativas, d4 tiene un buen rendimiento general y es la recomendación más consistente.\n")
