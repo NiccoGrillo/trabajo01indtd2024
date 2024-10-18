@@ -1,0 +1,217 @@
+---
+title: "Análisis de Decisiones bajo Incertidumbre"
+author: "Niccolò Grillo"
+output: html_document
+---
+
+# Problema 1
+
+En este problema, aplicamos varios criterios de decisión bajo incertidumbre a una matriz de decisiones.
+
+Primero, cargamos las funciones necesarias y creamos la matriz de decisión:
+
+```{r ng1}
+source("teoriadecision_funciones_incertidumbre.R")
+
+# Creamos la matriz de decisión
+# Las filas representan las alternativas de decisión (d1, d2, d3)
+# Las columnas representan los posibles estados del mundo (e1, e2, e3)
+X <- matrix(c(20, 10, -5,
+              15, 12, 0,
+               8,  5, 3), 
+            nrow = 3, ncol = 3, byrow = TRUE)
+colnames(X) <- c('e1', 'e2', 'e3')
+rownames(X) <- c('d1', 'd2', 'd3')
+```
+
+## Criterio de Wald (Pesimista)
+
+Este criterio busca minimizar la peor pérdida posible.
+
+**Escenario favorable:**
+
+```{r ng2}
+# Aplicamos el criterio de Wald (Pesimista)
+resultado_wald = criterio.Wald(X, favorable = TRUE)
+print(resultado_wald)
+```
+
+**Escenario desfavorable:**
+
+```{r ng3}
+# Ahora escenario desfavorable
+resultado_wald_desfavorable = criterio.Wald(X, favorable = FALSE)
+print(resultado_wald_desfavorable)
+```
+
+## Criterio Optimista (Maximax)
+
+Este criterio selecciona la alternativa con el mejor resultado posible.
+
+**Escenario favorable:**
+
+```{r ng4}
+# Aplicamos el criterio Optimista (Maximax)
+resultado_optimista = criterio.Optimista(X, favorable = TRUE)
+print(resultado_optimista)
+```
+
+**Escenario desfavorable:**
+
+```{r ng5}
+# Ahora escenario desfavorable
+resultado_optimista_desfavorable = criterio.Optimista(X, favorable = FALSE)
+print(resultado_optimista_desfavorable)
+```
+
+## Criterio de Hurwicz
+
+Alfa es el parámetro de optimismo (0.3 en este caso).
+
+**Escenario favorable:**
+
+```{r ng6}
+# Aplicamos el criterio de Hurwicz
+resultado_hurwicz = criterio.Hurwicz(X, alfa = 0.3, favorable = TRUE)
+print(resultado_hurwicz)
+```
+
+**Escenario desfavorable:**
+
+```{r ng7}
+# Ahora escenario desfavorable
+resultado_hurwicz_desfavorable = criterio.Hurwicz(X, alfa = 0.3, favorable = FALSE)
+print(resultado_hurwicz_desfavorable)
+```
+
+## Criterio de Savage (Minimización del Arrepentimiento)
+
+Este criterio minimiza el arrepentimiento por no haber elegido la mejor opción.
+
+**Escenario favorable:**
+
+```{r ng8}
+# Aplicamos el criterio de Savage
+resultado_savage = criterio.Savage(X, favorable = TRUE)
+print(resultado_savage)
+```
+
+**Escenario desfavorable:**
+
+```{r ng9}
+# Ahora escenario desfavorable
+resultado_savage_desfavorable = criterio.Savage(X, favorable = FALSE)
+print(resultado_savage_desfavorable)
+```
+
+## Criterio de Laplace
+
+Asume que todos los estados son igualmente probables.
+
+**Escenario favorable:**
+
+```{r ng10}
+# Aplicamos el criterio de Laplace
+resultado_laplace = criterio.Laplace(X, favorable = TRUE)
+print(resultado_laplace)
+```
+
+**Escenario desfavorable:**
+
+```{r ng11}
+# Ahora escenario desfavorable
+resultado_laplace_desfavorable = criterio.Laplace(X, favorable = FALSE)
+print(resultado_laplace_desfavorable)
+```
+
+## Criterio del Punto Ideal
+
+Selecciona la alternativa más cercana al punto ideal.
+
+**Escenario favorable:**
+
+```{r ng12}
+# Aplicamos el criterio del Punto Ideal
+resultado_puntoideal = criterio.PuntoIdeal(X, favorable = TRUE)
+print(resultado_puntoideal)
+```
+
+**Escenario desfavorable:**
+
+```{r ng13}
+# Ahora escenario desfavorable
+resultado_puntoideal_desfavorable = criterio.PuntoIdeal(X, favorable = FALSE)
+print(resultado_puntoideal_desfavorable)
+```
+
+Los resultados muestran que, al aplicar los distintos criterios de decisión a la matriz, las alternativas **d2** y **d3** destacan como las opciones óptimas en la mayoría de los casos. En el escenario favorable, **d2** es frecuentemente la mejor elección, mientras que en el desfavorable, **d3** suele ser la más recomendable.
+
+**Conclusión:** Las alternativas **d2** y **d3** son las más apropiadas según varios criterios y escenarios, sugiriendo que son decisiones robustas frente a diferentes condiciones.
+
+## Gráfico de los Resultados del Criterio de Hurwicz para Diferentes Valores de Alfa
+
+Analizamos cómo varían los resultados del criterio de Hurwicz para diferentes valores del parámetro alfa.
+
+```{r ng14}
+# Definimos el rango de valores de alfa (de 0 a 1)
+valores_alfa = seq(0, 1, by = 0.1)
+
+# Inicializamos vectores para almacenar los resultados
+hurwicz_valores = numeric(length(valores_alfa))
+alternativa_optima = numeric(length(valores_alfa))
+
+# Aplicamos el criterio de Hurwicz para cada valor de alfa
+for (i in seq_along(valores_alfa)) {
+    resultado_hurwicz = criterio.Hurwicz(X, alfa = valores_alfa[i], favorable = TRUE)
+    hurwicz_valores[i] = resultado_hurwicz$ValorOptimo
+    alternativa_optima[i] = resultado_hurwicz$AlternativaOptima
+}
+
+# Dibujamos el gráfico de los resultados
+plot(valores_alfa, hurwicz_valores, type = "o", col = "blue", lwd = 2,
+     xlab = expression(alpha), ylab = "Valor del criterio de Hurwicz",
+     main = "Resultados del criterio de Hurwicz para diferentes valores de alfa")
+
+# Añadimos texto para mostrar la alternativa óptima en cada punto
+for (i in seq_along(valores_alfa)) {
+    text(valores_alfa[i], hurwicz_valores[i], labels = paste("d", alternativa_optima[i], sep=""), pos = 3)
+}
+```
+
+Entonces, el criterio de Hurwicz selecciona la alternativa **d3** para valores de alfa menores a 0.2, la alternativa **d2** para valores de alfa entre 0.2 y 0.4, y la alternativa **d1** para valores de alfa mayores a 0.4.
+
+# Problema 2
+
+Definimos la tabla de decisión con los valores del caso real:
+
+```{r ng15}
+# Definir la tabla de decisión con los valores del caso real
+X <- matrix(c(250, 200, 100, 10,
+              400, 300, 150, -20,
+              500, 350, 200, -50,
+              600, 400, 250, -100),
+            nrow = 4, ncol = 4, byrow = TRUE)
+colnames(X) <- c('e1', 'e2', 'e3', 'e4')
+rownames(X) <- c('d1', 'd2', 'd3', 'd4')
+```
+
+Cargamos las funciones del archivo proporcionado:
+
+```{r ng16}
+# Cargar las funciones del archivo proporcionado
+# source('teoriadecision_funciones_incertidumbre_nuevo.R')
+```
+
+Aplicamos todos los criterios de decisión bajo incertidumbre utilizando la función `criterio.Todos`:
+
+```{r ng17}
+# Aplicar todos los criterios de decisión bajo incertidumbre
+resultado_todos <- criterio.Todos(X, alfa = 0.3, favorable = TRUE)
+
+# Imprimir la tabla con los resultados de todos los criterios
+print(resultado_todos)
+```
+
+**Conclusión del problema 2:**
+
+Basado en los resultados obtenidos, la alternativa **d4** parece ser la mejor opción en la mayoría de los métodos evaluados. En el criterio de Wald (Pesimista), Optimista y Punto Ideal, **d4** es la alternativa óptima. Aunque en el criterio de Hurwicz y Laplace se destacan otras alternativas, **d4** tiene un buen rendimiento general y es la recomendación más consistente.
